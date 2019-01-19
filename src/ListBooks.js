@@ -3,18 +3,30 @@ import PropTypes from 'prop-types';
 import Bookshelf from './Bookshelf';
 
 class ListBooks extends Component {
+  createShelfs = books => {
+    return [
+      {
+        title: 'Currently Reading',
+        id: 'currentlyReading',
+        books: this.props.books.filter(
+          book => book.shelf === 'currentlyReading'
+        )
+      },
+      {
+        title: 'Want to Read',
+        id: 'wantToRead',
+        books: this.props.books.filter(book => book.shelf === 'wantToRead')
+      },
+      {
+        title: 'Read',
+        id: 'read',
+        books: this.props.books.filter(book => book.shelf === 'read')
+      }
+    ];
+  };
+
   render() {
-    const shelfs = {
-      currentlyReading: this.props.books.filter(
-        book => book.shelf === 'currentlyReading'
-      ),
-      wantToRead: this.props.books.filter(
-        book => book.shelf === 'wantToRead'
-      ),
-      read: this.props.books.filter(
-        book => book.shelf === 'read'
-      )
-    };
+    const shelfs = this.createShelfs(this.props.books);
 
     return (
       <div>
@@ -23,10 +35,14 @@ class ListBooks extends Component {
             <h1>MyReads</h1>
           </div>
           <div className="list-books-content">
-            <Bookshelf title="Currently Reading" books={shelfs.currentlyReading}
-            />
-            <Bookshelf title="Want to Read" books={shelfs.wantToRead} />
-            <Bookshelf title="Read" books={shelfs.read} />
+            {shelfs.map(shelf => (
+              <Bookshelf
+                title={shelf.title}
+                key={shelf.id}
+                books={shelf.books}
+                onShelfChange={this.props.onShelfChange}
+              />
+            ))}
           </div>
           <div className="open-search">
             <button onClick={() => this.setState({ showSearchPage: true })}>

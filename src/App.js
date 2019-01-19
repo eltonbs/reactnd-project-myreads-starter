@@ -22,11 +22,37 @@ class BooksApp extends React.Component {
     });
   };
 
+  removeBook = (books, book) => books.filter(item => item.id !== book.id);
+
+  addBook = (books, book) => [...books, book];
+
+  onShelfChange = updatedBook => {
+    BooksAPI.update(updatedBook, updatedBook.shelf).then(() => {
+      // remove and add book to keep API sorting
+
+      // if updatedbook is in books
+      if (this.state.books.find(book => book.id === updatedBook.id)) {
+        this.setState(prevState => ({
+          books: this.removeBook(prevState.books, updatedBook)
+        }));
+      }
+
+      if (updatedBook.shelf !== 'none') {
+        this.setState(prevState => ({
+          books: this.addBook(prevState.books, updatedBook)
+        }));
+      }
+    });
+  };
+
   render() {
     return (
       <div className="app">
         <SearchBooks />
-        <ListBooks books={this.state.books} />
+        <ListBooks
+          books={this.state.books}
+          onShelfChange={this.onShelfChange}
+        />
       </div>
     );
   }
