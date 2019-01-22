@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import BookshelfChanger from './BookshelfChanger';
 
 class Book extends Component {
-  handleShelfChange = event => {
+  handleShelfChange = shelf => {
     const { book } = this.props;
-    book.shelf = event.target.value;
+    book.shelf = shelf;
     this.props.onShelfChange(book);
   };
 
   render() {
     const { book } = this.props;
-    if (!book.shelf) {
-      book.shelf = 'none';
-    }
 
     return (
       <li>
@@ -26,17 +24,10 @@ class Book extends Component {
                 backgroundImage: `url("${book.imageLinks && book.imageLinks.thumbnail}")`
               }}
             />
-            <div className="book-shelf-changer">
-              <select value={book.shelf} onChange={this.handleShelfChange}>
-                <option value="move" disabled>
-                  Move to...
-                </option>
-                <option value="currentlyReading">Currently Reading</option>
-                <option value="wantToRead">Want to Read</option>
-                <option value="read">Read</option>
-                <option value="none">None</option>
-              </select>
-            </div>
+            <BookshelfChanger
+              shelf={book.shelf}
+              onChange={this.handleShelfChange}
+            />
           </div>
           <div className="book-title">{book.title}</div>
           <div className="book-authors">

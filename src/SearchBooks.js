@@ -27,9 +27,7 @@ class SearchBooks extends Component {
           userBook => userBook.id === book.id
         );
 
-        if (userBook) {
-          book.shelf = userBook.shelf;
-        }
+        book.shelf = userBook ? userBook.shelf : 'none';
       });
 
       this.setState({
@@ -51,6 +49,7 @@ class SearchBooks extends Component {
                 type="text"
                 placeholder="Search by title or author"
                 onChange={this.handleSearch}
+                autoFocus
               />
             </div>
           </div>
