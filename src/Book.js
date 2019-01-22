@@ -23,7 +23,7 @@ class Book extends Component {
               style={{
                 width: 128,
                 height: 193,
-                backgroundImage: `url("${book.imageLinks.thumbnail}")`
+                backgroundImage: `url("${book.imageLinks && book.imageLinks.thumbnail}")`
               }}
             />
             <div className="book-shelf-changer">
@@ -49,7 +49,8 @@ class Book extends Component {
 }
 
 Book.propTypes = {
-  book: PropTypes.object.isRequired
+  book: PropTypes.object.isRequired,
+  onShelfChange: PropTypes.func.isRequired
 };
 
 export default Book;
