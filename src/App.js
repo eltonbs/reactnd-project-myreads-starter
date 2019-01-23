@@ -4,16 +4,39 @@ import * as BooksAPI from './BooksAPI';
 import './App.css';
 import SearchBooks from './SearchBooks';
 import ListBooks from './ListBooks';
+// notification
+import { ToastContainer, Slide, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const shelfEnum = {
+  currentlyReading: 'Currently Reading',
+  wantToRead: 'Want to Read',
+  read: 'Read'
+};
 
 class BooksApp extends React.Component {
   state = {
-    books: [],
+    books: []
   };
 
   componentDidMount = () => {
     BooksAPI.getAll().then(books => {
       this.setState({ books: books });
     });
+  };
+
+  notify = book => {
+    book.shelf === 'none'
+      ? toast.error(
+          <span>
+            <b>{book.title}</b> has been removed from your reads.
+          </span>
+        )
+      : toast.success(
+          <span>
+            <b>{book.title}</b> has been moved to <b>{shelfEnum[book.shelf]}</b>.
+          </span>
+        );
   };
 
   removeBook = (books, book) => books.filter(item => item.id !== book.id);
@@ -36,6 +59,8 @@ class BooksApp extends React.Component {
           books: this.addBook(prevState.books, updatedBook)
         }));
       }
+
+      this.notify(updatedBook);
     });
   };
 
@@ -48,12 +73,15 @@ class BooksApp extends React.Component {
             onShelfChange={this.onShelfChange}
           />
         )} />
+
         <Route path="/search" render={() => (
           <SearchBooks
             userBooks={this.state.books}
             onShelfChange={this.onShelfChange}
           />
         )} />
+
+        <ToastContainer hideProgressBar transition={Slide} />
       </div>
     );
   }
