@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import BooksGrid from './BooksGrid';
+import { Debounce } from 'react-throttle';
 
 class SearchBooks extends Component {
   state = {
@@ -12,13 +13,14 @@ class SearchBooks extends Component {
   handleSearch = event => {
     const query = event.target.value;
 
-    BooksAPI.search(query).then(result => {
-      
-      if (result.error === 'empty query') {
-        this.setState({
-          resultBooks: []
-        });
+    if (!query) {
+      this.setState({ resultBooks: [] });
+      return;
+    }
 
+    BooksAPI.search(query).then(result => {
+      if (result.error === 'empty query') {
+        this.setState({ resultBooks: [] });
         return;
       }
 
@@ -45,12 +47,14 @@ class SearchBooks extends Component {
               <button className="close-search">Close</button>
             </Link>
             <div className="search-books-input-wrapper">
-              <input
-                type="text"
-                placeholder="Search by title or author"
-                onChange={this.handleSearch}
-                autoFocus
-              />
+              <Debounce time="300" handler="onChange">
+                <input
+                  type="text"
+                  placeholder="Search by title or author"
+                  onChange={this.handleSearch}
+                  autoFocus
+                />
+              </Debounce>
             </div>
           </div>
           <div className="search-books-results">
